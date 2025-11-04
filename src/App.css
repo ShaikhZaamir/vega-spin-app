@@ -1,96 +1,232 @@
-/* ---------- variables ---------- */
 :root {
-  --primary: #2563ff;
-  --primary-dark: #1e4ddc;
-  --gradient-start: #c3eaff;
-  --gradient-end: #f7faff;
-  --text-dark: #1e293b;
+  --bg-1: #6dd3ff;
+  --bg-2: #a36bff;
+  --accent: #ff6b6b;
+  --accent-2: #ffd93d;
+  --glass: rgba(255, 255, 255, 0.12);
+  --text-dark: #07203a;
+  --card: rgba(255, 255, 255, 0.96);
+}
+
+/* Base */
+* {
+  box-sizing: border-box
+}
+
+body,
+html,
+#root {
+  height: 100%;
+  margin: 0
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
-}
-
-/* ---------- layout ---------- */
-html,
-body,
-#root,
-.app {
-  height: 100%;
-  margin: 0;
-  width: 100%;
-}
-
-.app {
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: linear-gradient(120deg, var(--bg-1), var(--bg-2));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text-dark);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6vh;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  color: var(--text-dark);
+  min-height: 100vh;
+  /* ✅ Instead of fixed height */
+  margin: 0;
+  padding: 16px;
+  /* ✅ Reduced from 32px */
+  overflow: hidden;
+  /* ✅ Prevent scroll overflow if animations push down */
+}
+
+
+/* Layout container */
+.app {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+  justify-content: center;
+  /* ✅ centers the wheel vertically */
+  min-height: 90vh;
+  /* ✅ keeps it within viewport */
+}
+
+
+/* Header */
+.header {
+  margin-top: 12px
 }
 
 .title {
-  margin-bottom: 2vh;
-  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  margin: 0;
+  letter-spacing: 0.4px;
 }
 
-/* ---------- wheel styling ---------- */
-.wheel-wrapper {
+.title-gradient {
+  background: linear-gradient(90deg, #fff, #fff0b3 40%, #ffd6f0 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  padding: 0 6px;
+  transform: translateZ(0);
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.95);
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+/* Wheel stage */
+.wheel-stage {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.wheel-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border-radius: 28px;
+  padding: 22px;
   position: relative;
-  /* width: min(80vw, 360px); */
-  /* scales on mobile, max 360 px */
-  margin: 0 auto;
+  box-shadow: 0 20px 50px rgba(11, 20, 40, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform .35s cubic-bezier(.2, .9, .2, 1);
 }
 
-.wheel-wrapper canvas {
-  width: 100% !important;
-  /* force the canvas to fit container */
-  height: auto !important;
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .15));
+.wheel-card.spinning {
+  transform: scale(0.995);
+  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.18));
 }
 
-/* .pointer {
+/* pointer (top center) */
+.pointer {
   position: absolute;
-  top: -22px;
   left: 50%;
+  top: -12px;
   transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-bottom: 28px solid var(--primary);
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .2));
-} */
+  width: 60px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #fff, #fff0);
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  z-index: 30;
+  pointer-events: none;
+}
 
-/* ---------- spin button ---------- */
+.pointer svg {
+  transform: rotate(180deg);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
+}
+
+/* wheel canvas wrapper sizing */
+.wheel-wrap {
+  width: min(78vw, 420px);
+  height: auto;
+  display: block;
+  padding-top: 8px;
+}
+
+/* enforce canvas fit */
+.wheel-wrap canvas {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 50%;
+}
+
+/* Decorative glow / idle float */
+.wheel-card::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 30px;
+  filter: blur(36px);
+  background: radial-gradient(circle at 30% 10%, rgba(255, 255, 255, 0.06), transparent 10%),
+    radial-gradient(circle at 70% 90%, rgba(255, 255, 255, 0.03), transparent 10%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Spin button */
 .spin-btn {
-  margin: 6vh 0 2vh;
-  padding: 14px 40px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--primary);
-  border: none;
+  appearance: none;
+  border: 0;
+  padding: 14px 36px;
   border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.05rem;
   cursor: pointer;
-  transition: transform .15s ease, background .25s ease;
+  color: #102027;
+  background: linear-gradient(90deg, #ffd93d, #ff6b6b);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  transform: translateZ(0);
+  transition: transform .18s ease, box-shadow .18s ease;
 }
 
 .spin-btn:hover:not(:disabled) {
-  background: var(--primary-dark);
-  transform: scale(1.05);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.spin-btn:active {
+  transform: translateY(-1px)
 }
 
 .spin-btn:disabled {
-  opacity: .55;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* ---------- small devices tweaks ---------- */
-@media (max-height: 600px) {
-  .spin-btn {
-    margin: 4vh 0 1vh;
+/* footer */
+.footer {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.95rem;
+  margin-bottom: 12px
+}
+
+/* Responsive tweaks */
+@media (max-width:500px) {
+  .wheel-wrap {
+    width: min(94vw, 340px);
   }
+
+  .pointer {
+    width: 52px;
+    top: -14px;
+  }
+
+  .header {
+    padding: 0 10px;
+  }
+}
+
+/* small animation to breathe */
+@keyframes floaty {
+  0% {
+    transform: translateY(0px)
+  }
+
+  50% {
+    transform: translateY(-6px)
+  }
+
+  100% {
+    transform: translateY(0px)
+  }
+}
+
+.wheel-card {
+  animation: floaty 6s ease-in-out infinite;
 }

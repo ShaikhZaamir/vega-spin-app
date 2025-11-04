@@ -4,19 +4,27 @@ import './PrizeModal.css';
 
 export default function PrizeModal({ prize, onClaim, onClose }) {
     useEffect(() => {
-        confetti({ particleCount: 180, spread: 80, origin: { y: 0.6 } });
+        // small celebratory confetti wave when modal mounts
+        confetti({
+            particleCount: 90,
+            spread: 55,
+            origin: { y: 0.55 },
+            colors: ['#ff6b6b', '#ffd93d', '#7ee3b8'],
+        });
     }, []);
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <div className="modal-card" onClick={e => e.stopPropagation()}>
-                <h2>Congratulations! 🎉</h2>
-                <p>You won:</p>
-                <span className="prize-text">{prize}</span>
+        <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
+            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-badge">✨</div>
+                <h2 className="modal-title">Congratulations!</h2>
+                <p className="modal-sub">You just won</p>
+                <div className="prize-text">{prize}</div>
 
-                <button className="primary" onClick={onClaim}>
-                    Claim Prize
-                </button>
+                <div className="modal-actions">
+                    <button className="btn-claim" onClick={onClaim}>Claim Prize</button>
+                    <button className="btn-close" onClick={onClose}>Close</button>
+                </div>
             </div>
         </div>
     );
